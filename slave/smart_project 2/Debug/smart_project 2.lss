@@ -1,0 +1,565 @@
+
+smart_project 2.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000258  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000002ac  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000002ac  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000002dc  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000088  00000000  00000000  00000318  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000a66  00000000  00000000  000003a0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 0000070c  00000000  00000000  00000e06  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000573  00000000  00000000  00001512  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  000000cc  00000000  00000000  00001a88  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000048b  00000000  00000000  00001b54  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000746  00000000  00000000  00001fdf  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000058  00000000  00000000  00002725  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 2a 01 	jmp	0x254	; 0x254 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+#include "MSPI_interface.h"
+#define F_CPU  16000000UL
+#include "util/delay.h"
+
+int main(void)
+{
+  6c:	cf 93       	push	r28
+  6e:	df 93       	push	r29
+  70:	1f 92       	push	r1
+  72:	cd b7       	in	r28, 0x3d	; 61
+  74:	de b7       	in	r29, 0x3e	; 62
+	    u8_t sendata ;
+		u8_t recvdata ;
+
+	/* spi slave input output port*/
+		mdio_setPinStatus(PORTB,(PIN4|PIN5|PIN7),INPUT_FLOAT);
+  76:	40 e0       	ldi	r20, 0x00	; 0
+  78:	60 eb       	ldi	r22, 0xB0	; 176
+  7a:	81 e0       	ldi	r24, 0x01	; 1
+  7c:	0e 94 7f 00 	call	0xfe	; 0xfe <mdio_setPinStatus>
+		mdio_setPinStatus(PORTB,PIN6,OUTPUT);
+  80:	42 e0       	ldi	r20, 0x02	; 2
+  82:	60 e4       	ldi	r22, 0x40	; 64
+  84:	81 e0       	ldi	r24, 0x01	; 1
+  86:	0e 94 7f 00 	call	0xfe	; 0xfe <mdio_setPinStatus>
+		
+	/* output pin actuator_1 and actuator_2 */
+		mdio_setPinStatus(PORTD,PIN3,OUTPUT);
+  8a:	42 e0       	ldi	r20, 0x02	; 2
+  8c:	68 e0       	ldi	r22, 0x08	; 8
+  8e:	83 e0       	ldi	r24, 0x03	; 3
+  90:	0e 94 7f 00 	call	0xfe	; 0xfe <mdio_setPinStatus>
+		mdio_setPinStatus(PORTD,PIN2,OUTPUT);
+  94:	42 e0       	ldi	r20, 0x02	; 2
+  96:	64 e0       	ldi	r22, 0x04	; 4
+  98:	83 e0       	ldi	r24, 0x03	; 3
+  9a:	0e 94 7f 00 	call	0xfe	; 0xfe <mdio_setPinStatus>
+		
+    /* his function is used to initialize the SPI module*/
+		mspi_init(MSPI_SLAVE_MODE,MSPI_MSB_FIRST,MSPI_SAMPLE_R_SETUP_F,MSPI_CLK_BY_16);
+  9e:	23 e0       	ldi	r18, 0x03	; 3
+  a0:	40 e0       	ldi	r20, 0x00	; 0
+  a2:	60 e0       	ldi	r22, 0x00	; 0
+  a4:	80 e0       	ldi	r24, 0x00	; 0
+  a6:	0e 94 0d 01 	call	0x21a	; 0x21a <mspi_init>
+
+	/* Replace with your application code */
+		while (1) 
+   { 
+	/*This function is used to send and receive one byte in slave mode*/
+		mspi_slaveSendRecvByte(sendata, &recvdata);
+  aa:	be 01       	movw	r22, r28
+  ac:	6f 5f       	subi	r22, 0xFF	; 255
+  ae:	7f 4f       	sbci	r23, 0xFF	; 255
+  b0:	80 e0       	ldi	r24, 0x00	; 0
+  b2:	0e 94 23 01 	call	0x246	; 0x246 <mspi_slaveSendRecvByte>
+
+		switch(recvdata)
+  b6:	89 81       	ldd	r24, Y+1	; 0x01
+  b8:	82 34       	cpi	r24, 0x42	; 66
+  ba:	d9 f0       	breq	.+54     	; 0xf2 <main+0x86>
+  bc:	18 f4       	brcc	.+6      	; 0xc4 <main+0x58>
+  be:	81 34       	cpi	r24, 0x41	; 65
+  c0:	91 f0       	breq	.+36     	; 0xe6 <main+0x7a>
+  c2:	f3 cf       	rjmp	.-26     	; 0xaa <main+0x3e>
+  c4:	81 36       	cpi	r24, 0x61	; 97
+  c6:	19 f0       	breq	.+6      	; 0xce <main+0x62>
+  c8:	82 36       	cpi	r24, 0x62	; 98
+  ca:	39 f0       	breq	.+14     	; 0xda <main+0x6e>
+  cc:	ee cf       	rjmp	.-36     	; 0xaa <main+0x3e>
+	   {
+		   
+	/*In case of Led1  ON*/
+			case 'a':
+			
+		mdio_setPinValue(PORTD,PIN3,HIGH);
+  ce:	41 e0       	ldi	r20, 0x01	; 1
+  d0:	68 e0       	ldi	r22, 0x08	; 8
+  d2:	83 e0       	ldi	r24, 0x03	; 3
+  d4:	0e 94 cd 00 	call	0x19a	; 0x19a <mdio_setPinValue>
+			break;
+  d8:	e8 cf       	rjmp	.-48     	; 0xaa <main+0x3e>
+			
+	/*In case of Led2  ON*/		
+		    case 'b':
+		
+		mdio_setPinValue(PORTD,PIN2,HIGH);
+  da:	41 e0       	ldi	r20, 0x01	; 1
+  dc:	64 e0       	ldi	r22, 0x04	; 4
+  de:	83 e0       	ldi	r24, 0x03	; 3
+  e0:	0e 94 cd 00 	call	0x19a	; 0x19a <mdio_setPinValue>
+	 	    break;
+  e4:	e2 cf       	rjmp	.-60     	; 0xaa <main+0x3e>
+			 
+	/*In case of Led1  OFF*/	
+		case 'A':
+		
+		mdio_setPinValue(PORTD,PIN3,LOW);
+  e6:	40 e0       	ldi	r20, 0x00	; 0
+  e8:	68 e0       	ldi	r22, 0x08	; 8
+  ea:	83 e0       	ldi	r24, 0x03	; 3
+  ec:	0e 94 cd 00 	call	0x19a	; 0x19a <mdio_setPinValue>
+			break;
+  f0:	dc cf       	rjmp	.-72     	; 0xaa <main+0x3e>
+			
+	/*In case of Led1  OFF*/
+		case 'B':
+		
+		mdio_setPinValue(PORTD,PIN2,LOW);
+  f2:	40 e0       	ldi	r20, 0x00	; 0
+  f4:	64 e0       	ldi	r22, 0x04	; 4
+  f6:	83 e0       	ldi	r24, 0x03	; 3
+  f8:	0e 94 cd 00 	call	0x19a	; 0x19a <mdio_setPinValue>
+			break;
+  fc:	d6 cf       	rjmp	.-84     	; 0xaa <main+0x3e>
+
+000000fe <mdio_setPinStatus>:
+/************************************************************************/
+
+void mdio_setPinStatus( u8_t  au8_port , u8_t au8_pin , u8_t au8_pinStatus)
+{
+	/*Switching over the ports*/
+	switch(au8_port)
+  fe:	81 30       	cpi	r24, 0x01	; 1
+ 100:	e1 f0       	breq	.+56     	; 0x13a <mdio_setPinStatus+0x3c>
+ 102:	18 f0       	brcs	.+6      	; 0x10a <mdio_setPinStatus+0xc>
+ 104:	83 30       	cpi	r24, 0x03	; 3
+ 106:	89 f1       	breq	.+98     	; 0x16a <mdio_setPinStatus+0x6c>
+ 108:	08 95       	ret
+	{/*In case portA */
+	case PORTA:
+	
+	/* switching over pin  status*/
+	switch(au8_pinStatus)	
+ 10a:	41 30       	cpi	r20, 0x01	; 1
+ 10c:	49 f0       	breq	.+18     	; 0x120 <mdio_setPinStatus+0x22>
+ 10e:	18 f0       	brcs	.+6      	; 0x116 <mdio_setPinStatus+0x18>
+ 110:	42 30       	cpi	r20, 0x02	; 2
+ 112:	79 f0       	breq	.+30     	; 0x132 <mdio_setPinStatus+0x34>
+ 114:	08 95       	ret
+		{
+		/*In case of input float*/
+		case INPUT_FLOAT:
+			
+			/*Clearing the corresponding bits in DDR register*/
+			MDIO_DDRA &= ~au8_pin;
+ 116:	8a b3       	in	r24, 0x1a	; 26
+ 118:	60 95       	com	r22
+ 11a:	68 23       	and	r22, r24
+ 11c:	6a bb       	out	0x1a, r22	; 26
+				break;
+ 11e:	08 95       	ret
+			
+		/*In case of input pullup*/
+		case INPUT_PULLUP:
+			
+			/*Clearing the corresponding bits in DDR register*/
+			MDIO_DDRA  &= ~au8_pin;		
+ 120:	8a b3       	in	r24, 0x1a	; 26
+ 122:	96 2f       	mov	r25, r22
+ 124:	90 95       	com	r25
+ 126:	89 23       	and	r24, r25
+ 128:	8a bb       	out	0x1a, r24	; 26
+			/*Setting the corresponding bits in PORT register*/
+			MDIO_PORTA |= au8_pin;
+ 12a:	8b b3       	in	r24, 0x1b	; 27
+ 12c:	68 2b       	or	r22, r24
+ 12e:	6b bb       	out	0x1b, r22	; 27
+				break;
+ 130:	08 95       	ret
+			
+		/*In case of output*/
+		case OUTPUT:
+
+			/*Setting the corresponding bits in DDR register*/
+			MDIO_DDRA |= au8_pin;
+ 132:	8a b3       	in	r24, 0x1a	; 26
+ 134:	68 2b       	or	r22, r24
+ 136:	6a bb       	out	0x1a, r22	; 26
+				break;
+ 138:	08 95       	ret
+		break;
+	/*In case of PORTB*/
+		case PORTB:
+			
+			/*Switching over pin status*/
+			switch(au8_pinStatus)
+ 13a:	41 30       	cpi	r20, 0x01	; 1
+ 13c:	49 f0       	breq	.+18     	; 0x150 <mdio_setPinStatus+0x52>
+ 13e:	18 f0       	brcs	.+6      	; 0x146 <mdio_setPinStatus+0x48>
+ 140:	42 30       	cpi	r20, 0x02	; 2
+ 142:	79 f0       	breq	.+30     	; 0x162 <mdio_setPinStatus+0x64>
+ 144:	08 95       	ret
+			{
+				/*In case of input float*/
+				case INPUT_FLOAT:
+					
+					/*Clearing the corresponding bits in DDR register*/
+					MDIO_DDRB &= ~au8_pin; 
+ 146:	87 b3       	in	r24, 0x17	; 23
+ 148:	60 95       	com	r22
+ 14a:	68 23       	and	r22, r24
+ 14c:	67 bb       	out	0x17, r22	; 23
+					break;
+ 14e:	08 95       	ret
+				
+				/*In case of input pullup*/				
+				case INPUT_PULLUP:
+					
+					/*Clearing the corresponding bits in DDR register*/					
+					MDIO_DDRB  &= ~au8_pin;
+ 150:	87 b3       	in	r24, 0x17	; 23
+ 152:	96 2f       	mov	r25, r22
+ 154:	90 95       	com	r25
+ 156:	89 23       	and	r24, r25
+ 158:	87 bb       	out	0x17, r24	; 23
+					
+					/*Setting the corresponding bits in PORT register*/
+					MDIO_PORTB |= au8_pin;
+ 15a:	88 b3       	in	r24, 0x18	; 24
+ 15c:	68 2b       	or	r22, r24
+ 15e:	68 bb       	out	0x18, r22	; 24
+					break;
+ 160:	08 95       	ret
+				
+				/*In case of output*/
+				case OUTPUT:
+
+					/*Setting the corresponding bits in DDR register*/
+					MDIO_DDRB |= au8_pin;
+ 162:	87 b3       	in	r24, 0x17	; 23
+ 164:	68 2b       	or	r22, r24
+ 166:	67 bb       	out	0x17, r22	; 23
+					break;
+ 168:	08 95       	ret
+	
+	/*In case of PORTD*/
+		case PORTD:
+			
+			/*Switching over pin status*/
+			switch(au8_pinStatus)
+ 16a:	41 30       	cpi	r20, 0x01	; 1
+ 16c:	49 f0       	breq	.+18     	; 0x180 <mdio_setPinStatus+0x82>
+ 16e:	18 f0       	brcs	.+6      	; 0x176 <mdio_setPinStatus+0x78>
+ 170:	42 30       	cpi	r20, 0x02	; 2
+ 172:	79 f0       	breq	.+30     	; 0x192 <mdio_setPinStatus+0x94>
+ 174:	08 95       	ret
+			{
+				/*In case of input float*/
+				case INPUT_FLOAT:
+					
+					/*Clearing the corresponding bits in DDR register*/
+					MDIO_DDRD &= ~au8_pin; 
+ 176:	81 b3       	in	r24, 0x11	; 17
+ 178:	60 95       	com	r22
+ 17a:	68 23       	and	r22, r24
+ 17c:	61 bb       	out	0x11, r22	; 17
+					break;
+ 17e:	08 95       	ret
+				
+				/*In case of input pullup*/				
+				case INPUT_PULLUP:
+					
+					/*Clearing the corresponding bits in DDR register*/					
+					MDIO_DDRD  &= ~au8_pin;
+ 180:	81 b3       	in	r24, 0x11	; 17
+ 182:	96 2f       	mov	r25, r22
+ 184:	90 95       	com	r25
+ 186:	89 23       	and	r24, r25
+ 188:	81 bb       	out	0x11, r24	; 17
+					
+					/*Setting the corresponding bits in PORT register*/
+					MDIO_PORTD |= au8_pin;
+ 18a:	82 b3       	in	r24, 0x12	; 18
+ 18c:	68 2b       	or	r22, r24
+ 18e:	62 bb       	out	0x12, r22	; 18
+					break;
+ 190:	08 95       	ret
+				
+				/*In case of output*/
+				case OUTPUT:
+
+					/*Setting the corresponding bits in DDR register*/
+					MDIO_DDRD |= au8_pin;
+ 192:	81 b3       	in	r24, 0x11	; 17
+ 194:	68 2b       	or	r22, r24
+ 196:	61 bb       	out	0x11, r22	; 17
+ 198:	08 95       	ret
+
+0000019a <mdio_setPinValue>:
+
+
+void mdio_setPinValue(u8_t au8_port, u8_t au8_pin, u8_t au8_pinValue)
+{
+	/*Switching over the DIO ports*/
+	switch(au8_port)
+ 19a:	81 30       	cpi	r24, 0x01	; 1
+ 19c:	a1 f0       	breq	.+40     	; 0x1c6 <mdio_setPinValue+0x2c>
+ 19e:	28 f0       	brcs	.+10     	; 0x1aa <mdio_setPinValue+0x10>
+ 1a0:	82 30       	cpi	r24, 0x02	; 2
+ 1a2:	f9 f0       	breq	.+62     	; 0x1e2 <mdio_setPinValue+0x48>
+ 1a4:	83 30       	cpi	r24, 0x03	; 3
+ 1a6:	59 f1       	breq	.+86     	; 0x1fe <mdio_setPinValue+0x64>
+ 1a8:	08 95       	ret
+	{
+		/*In case of PORTA*/
+		case PORTA:
+			
+			/*Switching over pin value*/
+			switch(au8_pinValue)
+ 1aa:	44 23       	and	r20, r20
+ 1ac:	19 f0       	breq	.+6      	; 0x1b4 <mdio_setPinValue+0x1a>
+ 1ae:	41 30       	cpi	r20, 0x01	; 1
+ 1b0:	31 f0       	breq	.+12     	; 0x1be <mdio_setPinValue+0x24>
+ 1b2:	08 95       	ret
+			{
+			/*In case of low*/
+			case LOW:
+					
+					/*Clearing the corresponding bits in PORT register*/
+					MDIO_PORTA &= ~au8_pin; 
+ 1b4:	8b b3       	in	r24, 0x1b	; 27
+ 1b6:	60 95       	com	r22
+ 1b8:	68 23       	and	r22, r24
+ 1ba:	6b bb       	out	0x1b, r22	; 27
+					break;
+ 1bc:	08 95       	ret
+				
+			/*In case of high*/				
+			case HIGH:
+					
+					/*Setting the corresponding bits in PORT register*/
+					MDIO_PORTA |= au8_pin;
+ 1be:	8b b3       	in	r24, 0x1b	; 27
+ 1c0:	68 2b       	or	r22, r24
+ 1c2:	6b bb       	out	0x1b, r22	; 27
+					break;
+ 1c4:	08 95       	ret
+
+		/*In case of PORTB*/
+		case PORTB:
+			
+			/*Switching over pin value*/
+			switch(au8_pinValue)
+ 1c6:	44 23       	and	r20, r20
+ 1c8:	19 f0       	breq	.+6      	; 0x1d0 <mdio_setPinValue+0x36>
+ 1ca:	41 30       	cpi	r20, 0x01	; 1
+ 1cc:	31 f0       	breq	.+12     	; 0x1da <mdio_setPinValue+0x40>
+ 1ce:	08 95       	ret
+			{
+				/*In case of low*/
+				case LOW:
+					
+					/*Clearing the corresponding bits in PORT register*/
+					MDIO_PORTB &= ~au8_pin; 
+ 1d0:	88 b3       	in	r24, 0x18	; 24
+ 1d2:	60 95       	com	r22
+ 1d4:	68 23       	and	r22, r24
+ 1d6:	68 bb       	out	0x18, r22	; 24
+					break;
+ 1d8:	08 95       	ret
+				
+				/*In case of high*/				
+				case HIGH:
+					
+					/*Setting the corresponding bits in PORT register*/
+					MDIO_PORTB |= au8_pin;
+ 1da:	88 b3       	in	r24, 0x18	; 24
+ 1dc:	68 2b       	or	r22, r24
+ 1de:	68 bb       	out	0x18, r22	; 24
+					break;
+ 1e0:	08 95       	ret
+
+		/*In case of PORTC*/
+		case PORTC:
+			
+			/*Switching over pin value*/
+			switch(au8_pinValue)
+ 1e2:	44 23       	and	r20, r20
+ 1e4:	19 f0       	breq	.+6      	; 0x1ec <mdio_setPinValue+0x52>
+ 1e6:	41 30       	cpi	r20, 0x01	; 1
+ 1e8:	31 f0       	breq	.+12     	; 0x1f6 <mdio_setPinValue+0x5c>
+ 1ea:	08 95       	ret
+			{
+				/*In case of low*/
+				case LOW:
+					
+					/*Clearing the corresponding bits in PORT register*/
+					MDIO_PORTC &= ~au8_pin; 
+ 1ec:	85 b3       	in	r24, 0x15	; 21
+ 1ee:	60 95       	com	r22
+ 1f0:	68 23       	and	r22, r24
+ 1f2:	65 bb       	out	0x15, r22	; 21
+					break;
+ 1f4:	08 95       	ret
+				
+				/*In case of high*/				
+				case HIGH:
+					
+					/*Setting the corresponding bits in PORT register*/
+					MDIO_PORTC |= au8_pin;
+ 1f6:	85 b3       	in	r24, 0x15	; 21
+ 1f8:	68 2b       	or	r22, r24
+ 1fa:	65 bb       	out	0x15, r22	; 21
+					break;
+ 1fc:	08 95       	ret
+
+		/*In case of PORTD*/
+		case PORTD:
+			
+			/*Switching over pin value*/
+			switch(au8_pinValue)
+ 1fe:	44 23       	and	r20, r20
+ 200:	19 f0       	breq	.+6      	; 0x208 <mdio_setPinValue+0x6e>
+ 202:	41 30       	cpi	r20, 0x01	; 1
+ 204:	31 f0       	breq	.+12     	; 0x212 <mdio_setPinValue+0x78>
+ 206:	08 95       	ret
+			{
+				/*In case of low*/
+				case LOW:
+					
+					/*Clearing the corresponding bits in PORT register*/
+					MDIO_PORTD &= ~au8_pin; 
+ 208:	82 b3       	in	r24, 0x12	; 18
+ 20a:	60 95       	com	r22
+ 20c:	68 23       	and	r22, r24
+ 20e:	62 bb       	out	0x12, r22	; 18
+					break;
+ 210:	08 95       	ret
+				
+				/*In case of high*/				
+				case HIGH:
+					
+					/*Setting the corresponding bits in PORT register*/
+					MDIO_PORTD |= au8_pin;
+ 212:	82 b3       	in	r24, 0x12	; 18
+ 214:	68 2b       	or	r22, r24
+ 216:	62 bb       	out	0x12, r22	; 18
+ 218:	08 95       	ret
+
+0000021a <mspi_init>:
+		/*Wait for 1 microseconds*/
+		_delay_us(1);
+	}
+	
+	/*Get the received data from slave*/
+	*pu8_recvData = MSPI_SPDR;
+ 21a:	1d b8       	out	0x0d, r1	; 13
+ 21c:	20 ff       	sbrs	r18, 0
+ 21e:	70 9a       	sbi	0x0e, 0	; 14
+ 220:	9d b1       	in	r25, 0x0d	; 13
+ 222:	44 0f       	add	r20, r20
+ 224:	44 0f       	add	r20, r20
+ 226:	90 64       	ori	r25, 0x40	; 64
+ 228:	49 2b       	or	r20, r25
+ 22a:	30 e1       	ldi	r19, 0x10	; 16
+ 22c:	83 9f       	mul	r24, r19
+ 22e:	c0 01       	movw	r24, r0
+ 230:	11 24       	eor	r1, r1
+ 232:	84 2b       	or	r24, r20
+ 234:	90 e2       	ldi	r25, 0x20	; 32
+ 236:	69 9f       	mul	r22, r25
+ 238:	b0 01       	movw	r22, r0
+ 23a:	11 24       	eor	r1, r1
+ 23c:	68 2b       	or	r22, r24
+ 23e:	26 95       	lsr	r18
+ 240:	26 2b       	or	r18, r22
+ 242:	2d b9       	out	0x0d, r18	; 13
+ 244:	08 95       	ret
+
+00000246 <mspi_slaveSendRecvByte>:
+}
+
+void mspi_slaveSendRecvByte(u8_t au8_sendData, u8_t* pu8_recvData)
+{
+	/*Checking if there's any new data from master or not*/
+	if(GET_BIT(MSPI_SPSR, 7))
+ 246:	77 9b       	sbis	0x0e, 7	; 14
+ 248:	04 c0       	rjmp	.+8      	; 0x252 <mspi_slaveSendRecvByte+0xc>
+	{
+		/*Get the received data from master*/
+		*pu8_recvData = MSPI_SPDR;
+ 24a:	9f b1       	in	r25, 0x0f	; 15
+ 24c:	fb 01       	movw	r30, r22
+ 24e:	90 83       	st	Z, r25
+		
+		/*Send data through SPI bus from slave to master*/
+		MSPI_SPDR = au8_sendData;
+ 250:	8f b9       	out	0x0f, r24	; 15
+ 252:	08 95       	ret
+
+00000254 <_exit>:
+ 254:	f8 94       	cli
+
+00000256 <__stop_program>:
+ 256:	ff cf       	rjmp	.-2      	; 0x256 <__stop_program>
